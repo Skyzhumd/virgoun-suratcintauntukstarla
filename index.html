@@ -933,8 +933,7 @@ document.querySelector('.app').appendChild(playlistSection);
 
 albums[0].albums.forEach((alb) => {
   const albumDiv = document.createElement('div');
-  albumDiv.className = 'song-list';
-  albumDiv.innerHTML = `<div class="section-title" style="font-size:14px;margin-bottom:6px;">${alb.title}</div>`;
+  albumDiv.className = 'song-list";
   
   alb.songs.forEach((song, si) => {
     const songRow = document.createElement('div');
