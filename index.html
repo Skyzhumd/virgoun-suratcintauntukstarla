@@ -643,10 +643,10 @@ input[type=range]::-webkit-slider-thumb {
     <div class="song-list" id="list"></div>
   </div>
 </div>
-
 <script src="lagu.js">
 </script>
 <script>
+
 const audio = document.getElementById("audio");
 const npTitle = document.getElementById("npTitle");
 const npCover = document.getElementById("npCover");
@@ -708,13 +708,14 @@ function updateBadge() {
 }
 
 btnLogin.onclick = () => {
-  // ...
+  const u = document.getElementById("user").value.trim();
+  const p = document.getElementById("pass").value;
   if (u === "admin" && p === "123") {
     localStorage.setItem("mlUser", "premium");
     isPremium = true;
+    loginScreen.classList.add('hidden');
     updateBadge();
     showToast("✨ Selamat datang, Premium!");
-    window.location.href = 'index.html'; // tambahin ini
   } else {
     document.querySelector('.login-box').style.animation = 'none';
     setTimeout(() => { document.querySelector('.login-box').style.animation = 'shake 0.4s ease'; }, 10);
@@ -725,9 +726,9 @@ btnLogin.onclick = () => {
 btnGuest.onclick = () => {
   localStorage.setItem("mlUser", "guest");
   isPremium = false;
+  loginScreen.classList.add('hidden');
   updateBadge();
   showToast("👋 Masuk sebagai tamu");
-  window.location.href = 'index.html'; // tambahin ini
 };
 
 btnLogout.onclick = () => {
