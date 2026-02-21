@@ -1,595 +1,257 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spotify Lite</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<title>Spotify Lite Premium</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #0a0a12;
-  --panel: #0e0e1a;
-  --orange: #ff5e1a;
-  --orange2: #ff8c42;
-  --pink: #ff2d78;
-  --yellow: #ffd94a;
-  --grad: linear-gradient(135deg, #ff5e1a, #ff2d78);
-  --text: #f5f0ff;
-  --sub: #6b6880;
-  --border: rgba(255,255,255,0.07);
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0a0a12;
+  color:white;
+}/* LOGIN */
+#loginScreen{
+position:fixed;
+inset:0;
+background:#0a0a12;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+.login-box{
+background:#111;
+padding:25px;
+border-radius:10px;
+width:260px;
+text-align:center;
+}
+.login-box input{
+width:100%;
+padding:8px;
+margin:6px 0;
+}
+.login-box button{
+width:100%;
+padding:10px;
+margin-top:6px;
 }
 
-@keyframes pulse-ring {
-  0%   { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(1.4); opacity: 0; }
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes bar { from { height: 3px; } to { height: 16px; } }
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position:  200% center; }
-}
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* APP */
+.app{
+padding:15px;
+max-width:500px;
+margin:auto;
 }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Space Grotesk', sans-serif;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background-image:
-    radial-gradient(ellipse 55% 45% at 0% 0%,   rgba(255,94,26,0.12) 0%, transparent 65%),
-    radial-gradient(ellipse 45% 50% at 100% 100%, rgba(255,45,120,0.1) 0%, transparent 65%);
+.controls button{
+padding:10px;
+margin:5px;
 }
 
-.app {
-  width: 100%;
-  max-width: 880px;
-  display: grid;
-  grid-template-columns: 310px 1fr;
-  border-radius: 24px;
-  overflow: hidden;
-  border: 1px solid rgba(255,94,26,0.18);
-  box-shadow: 0 0 60px rgba(255,94,26,0.08), 0 40px 80px rgba(0,0,0,0.7);
-  background: var(--panel);
-  min-height: 580px;
-  animation: fadeSlide 0.4s ease;
+.list{
+margin-top:15px;
 }
-
-/* ── Player ── */
-.player {
-  padding: 32px 26px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: linear-gradient(180deg, #100e1c 0%, #0a0a12 100%);
-  border-right: 1px solid var(--border);
-  position: relative;
-  overflow: hidden;
+.row{
+padding:8px;
+border-bottom:1px solid #222;
+cursor:pointer;
 }
-
-.player::before {
-  content: '';
-  position: absolute;
-  top: 50px; left: 50%;
-  transform: translateX(-50%);
-  width: 220px; height: 220px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,94,26,0.2) 0%, rgba(255,45,120,0.1) 50%, transparent 70%);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s;
-}
-.player.playing::before { opacity: 1; }
-
-/* Art */
-.art-wrap {
-  position: relative;
-  width: 196px; height: 196px;
-  flex-shrink: 0;
-}
-
-.pulse-ring {
-  position: absolute;
-  inset: -14px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255,94,26,0.5);
-  display: none;
-  animation: pulse-ring 1.8s ease-out infinite;
-}
-.pulse-ring:nth-child(2) { animation-delay: 0.6s; }
-.pulse-ring:nth-child(3) { animation-delay: 1.2s; }
-.playing .pulse-ring { display: block; }
-
-.spin-ring {
-  position: absolute;
-  inset: -7px;
-  border-radius: 50%;
-  border: 1.5px dashed rgba(255,140,66,0.3);
-  display: none;
-  animation: spin 5s linear infinite;
-}
-.playing .spin-ring { display: block; }
-
-.art {
-  width: 196px; height: 196px;
-  border-radius: 18px;
-  background: #1a1526;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 60px;
-  overflow: hidden;
-  border: 1px solid rgba(255,94,26,0.2);
-  box-shadow: 0 16px 50px rgba(0,0,0,0.6);
-  transition: border-radius 0.5s, box-shadow 0.5s;
-}
-.playing .art {
-  border-radius: 50%;
-  animation: spin 10s linear infinite;
-  box-shadow: 0 0 0 3px rgba(255,94,26,0.25), 0 20px 50px rgba(255,94,26,0.3), 0 0 80px rgba(255,45,120,0.15);
-}
-.art img { width: 100%; height: 100%; object-fit: cover; }
-
-.vinyl-center {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none;
-  opacity: 0; transition: opacity 0.4s;
-}
-.playing .vinyl-center { opacity: 1; }
-.vinyl-center::after {
-  content: '';
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: #100e1c;
-  border: 2.5px solid rgba(255,94,26,0.5);
-  box-shadow: 0 0 12px rgba(255,94,26,0.4);
-}
-
-/* Info */
-.info {
-  margin-top: 22px;
-  text-align: center;
-  width: 100%;
-}
-.info-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 26px;
-  letter-spacing: 0.04em;
-  color: var(--text);
-  margin-bottom: 5px;
-}
-.playing .info-title {
-  background: linear-gradient(90deg, #ff5e1a, #ffd94a, #ff2d78, #ff8c42, #ff5e1a);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 3s linear infinite;
-}
-.info-artist {
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--orange2);
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.info-artist::before, .info-artist::after {
-  content: ''; display: block;
-  width: 18px; height: 1px;
-  background: var(--orange); opacity: 0.5;
-}
-
-/* Progress */
-.prog-wrap { width: 100%; margin-top: 22px; }
-.times {
-  display: flex; justify-content: space-between;
-  font-size: 11px; color: var(--sub);
-  margin-bottom: 10px;
-  font-variant-numeric: tabular-nums;
-}
-.slider-track {
-  position: relative;
-  height: 4px;
-  background: rgba(255,255,255,0.07);
-  border-radius: 99px;
-}
-.slider-fill {
-  position: absolute; left: 0; top: 0;
-  height: 100%;
-  background: var(--grad);
-  border-radius: 99px;
-  pointer-events: none;
-  width: 0%;
-  transition: width 0.1s linear;
-  box-shadow: 0 0 8px rgba(255,94,26,0.6);
-}
-input[type="range"] {
-  -webkit-appearance: none;
-  position: absolute; inset: -8px 0;
-  width: 100%; height: 20px;
-  background: transparent; cursor: pointer; outline: none;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px; height: 16px;
-  border-radius: 50%; background: #fff;
-  box-shadow: 0 0 0 3px rgba(255,94,26,0.4), 0 0 12px rgba(255,94,26,0.6);
-  transition: transform 0.15s;
-}
-input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.3); }
-
-/* Controls */
-.controls {
-  display: flex; align-items: center; justify-content: center;
-  gap: 14px; margin-top: 22px; width: 100%;
-}
-.btn {
-  background: none; border: none; cursor: pointer; color: var(--sub);
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  transition: color 0.2s, transform 0.15s, background 0.2s, box-shadow 0.2s;
-  padding: 10px;
-}
-.btn:hover { color: var(--text); transform: scale(1.1); }
-.btn-prev, .btn-next {
-  width: 42px; height: 42px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-}
-.btn-prev:hover, .btn-next:hover {
-  background: rgba(255,94,26,0.12);
-  border-color: rgba(255,94,26,0.35);
-  color: var(--orange2);
-}
-.btn-play {
-  width: 60px; height: 60px;
-  background: var(--grad);
-  color: #fff; font-size: 20px;
-  box-shadow: 0 8px 28px rgba(255,94,26,0.5);
-}
-.btn-play:hover {
-  color: #fff; transform: scale(1.07);
-  box-shadow: 0 12px 40px rgba(255,94,26,0.65);
-}
-.playing .btn-play {
-  box-shadow: 0 8px 28px rgba(255,45,120,0.55), 0 0 30px rgba(255,94,26,0.3);
-}
-
-/* ── List Panel ── */
-.list-panel {
-  display: flex; flex-direction: column;
-  background: #080810;
-}
-.list-head {
-  padding: 22px 22px 14px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-  display: flex; align-items: baseline; gap: 10px;
-}
-.list-head h3 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px; letter-spacing: 0.06em; color: var(--text);
-}
-.list-head .badge {
-  font-size: 11px; font-weight: 600;
-  background: rgba(255,94,26,0.1);
-  border: 1px solid rgba(255,94,26,0.25);
-  border-radius: 20px; padding: 2px 10px;
-  color: var(--orange2);
-}
-
-.list-body { overflow-y: auto; flex: 1; }
-.list-body::-webkit-scrollbar { width: 3px; }
-.list-body::-webkit-scrollbar-track { background: transparent; }
-.list-body::-webkit-scrollbar-thumb { background: rgba(255,94,26,0.3); border-radius: 3px; }
-
-/* Row */
-.row {
-  display: grid;
-  grid-template-columns: 30px 44px 1fr auto;
-  align-items: center;
-  gap: 12px; padding: 10px 18px;
-  cursor: pointer;
-  transition: background 0.15s;
-  border-left: 3px solid transparent;
-  position: relative;
-}
-.row:hover { background: rgba(255,94,26,0.06); }
-.row.active {
-  background: rgba(255,94,26,0.09);
-  border-left-color: var(--orange);
-}
-
-.row-num {
-  font-size: 11px; font-weight: 600;
-  color: var(--sub);
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-  position: relative;
-}
-.row-num-val { display: block; }
-.row.active .row-num-val { visibility: hidden; }
-
-.eq {
-  position: absolute; inset: 0;
-  display: none;
-  align-items: flex-end; justify-content: center;
-  gap: 2px; padding-bottom: 0;
-}
-.row.active.playing .eq { display: flex; }
-.eq b {
-  display: block; width: 3px;
-  background: var(--grad);
-  border-radius: 2px;
-  animation: bar 0.6s ease-in-out infinite alternate;
-}
-.eq b:nth-child(2) { animation-delay: 0.2s; }
-.eq b:nth-child(3) { animation-delay: 0.4s; }
-
-.thumb {
-  width: 44px; height: 44px; border-radius: 10px;
-  background: #1a1526;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; overflow: hidden; flex-shrink: 0;
-  border: 1px solid var(--border);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.row.active .thumb {
-  border-color: rgba(255,94,26,0.4);
-  box-shadow: 0 0 12px rgba(255,94,26,0.2);
-}
-.thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-.meta { min-width: 0; }
-.meta-title {
-  font-size: 13.5px; font-weight: 600; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  margin-bottom: 3px; transition: color 0.2s;
-}
-.row.active .meta-title { color: var(--orange2); }
-.meta-artist {
-  font-size: 11.5px; color: var(--sub);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-/* Duration — clearly visible always */
-.dur {
-  font-size: 11.5px; font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap; flex-shrink: 0;
-  padding: 4px 9px; border-radius: 8px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.07);
-  color: var(--sub);
-  transition: all 0.2s;
-}
-.row.active .dur {
-  background: rgba(255,94,26,0.15);
-  border-color: rgba(255,94,26,0.4);
-  color: var(--orange2);
-  box-shadow: 0 0 10px rgba(255,94,26,0.15);
-}
-.row:hover .dur { color: var(--text); background: rgba(255,255,255,0.07); }
-
-/* ── Responsive ── */
-@media (max-width: 680px) {
-  body { padding: 0; align-items: stretch; }
-  .app {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    border-radius: 0; min-height: 100dvh;
-    border: none; box-shadow: none;
-  }
-  .player {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    padding: 28px 22px 22px;
-  }
-  .art-wrap { width: 172px; height: 172px; }
-  .art { width: 172px; height: 172px; }
-  .list-panel { flex: 1; min-height: 0; }
-}
-
-@media (max-width: 380px) {
-  .art-wrap { width: 148px; height: 148px; }
-  .art { width: 148px; height: 148px; font-size: 48px; }
-  .info-title { font-size: 22px; }
-  .row { gap: 9px; padding: 9px 12px; }
+.row.active{
+background:#222;
 }
 </style>
+
 </head>
-<body>
-<div class="app">
-  <div class="player" id="player">
-    <div class="art-wrap" id="artWrap">
-      <div class="pulse-ring"></div>
-      <div class="pulse-ring"></div>
-      <div class="pulse-ring"></div>
-      <div class="spin-ring"></div>
-      <div class="art" id="art">🎵</div>
-      <div class="vinyl-center"></div>
-    </div>
-    <div class="info">
-      <div class="info-title" id="infoTitle">Pilih Lagu</div>
-      <div class="info-artist" id="infoArtist">—</div>
-    </div>
-    <div class="prog-wrap">
-      <div class="times">
-        <span id="cur">0:00</span>
-        <span id="tot">0:00</span>
-      </div>
-      <div class="slider-track">
-        <div class="slider-fill" id="fill"></div>
-        <input type="range" id="prog" value="0" min="0" max="100" step="0.1">
-      </div>
-    </div>
-    <div class="controls">
-      <button class="btn btn-prev" id="btnPrev">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
-      </button>
-      <button class="btn btn-play" id="btnPlay">
-        <svg id="iconPlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        <svg id="iconPause" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg>
-      </button>
-      <button class="btn btn-next" id="btnNext">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6zm8.5-6v6h2V6h-2z"/></svg>
-      </button>
-    </div>
+<body><!-- LOGIN --><div id="loginScreen">
+  <div class="login-box">
+    <h3>Login Premium</h3>
+    <input id="user" placeholder="Username">
+    <input id="pass" type="password" placeholder="Password">
+    <button id="btnLogin">Login</button>
+    <button id="btnGuest">Masuk Gratis</button>
   </div>
-
-  <div class="list-panel">
-    <div class="list-head">
-      <h3>Daftar Lagu</h3>
-      <span class="badge" id="listCount">0 lagu</span>
-    </div>
-    <div class="list-body" id="listBody"></div>
-  </div>
-</div>
-
-<audio id="audio" preload="auto"></audio>
-<script>
+</div><!-- APP --><div class="app">
+  <h2 id="title">Pilih Lagu</h2>
+  <audio id="audio"></audio>  <div class="controls">
+    <button id="prev">Prev</button>
+    <button id="play">Play / Pause</button>
+    <button id="next">Next</button>
+    <button id="mode">Mode: Normal</button>
+  </div>  <div class="list" id="list"></div>
+</div><script>
+// =====================
+// DATA LAGU (18)
+// =====================
 const songs = [
-  { title:"Surat Cinta Untuk Starla", artist:"Virgoun",    src:"starla.mp3",          cover:"scus.jpg", duration:"4:51" },
-  { title:"Selamat Tinggal",          artist:"Virgoun",    src:"selamat-tinggal.mp3", cover:"s.jpg", duration:"5:53" },
-  { title:"Seluruh Nafas Ini",        artist:"Last Child", src:"s.mp3",               cover:"sni.jpg",          duration:"4:53" },
-  { title:"Duka",                     artist:"Last Child", src:"d.mp3",               cover:"d.jpg",          duration:"5:21" },
-  { title:"Pedih",                    artist:"Last Child", src:"p.mp3",               cover:"p.jpg",          duration:"4:13" },
-  { title:"Bukti",                    artist:"Virgoun",    src:"b.mp3",               cover:"b.jpg",          duration:"4:43" },
-  { title:"Diary Depresiku",          artist:"Last Child", src:"di.mp3",              cover:"dd.jpg",          duration:"4:39" },
-  { title:"Sekuat Hatimu",            artist:"Last Child", src:"se.mp3",              cover:"sh.jpg",          duration:"4:42" },
-{ title:"Bernafas Tanpamu", artist:"Last Child", src:"1.mp3", cover:"bt.jpg", duration:"5:45" },
-{ title:"Tak Pernah Ternilai", artist:"Last Child", src:"2.mp3", cover:"tpt.jpg", duration:"4:27" },
-{ title:"Saat Kau Telah Mengerti", artist:"Virgoun", src:"3.mp3",              cover:"sktm.jpg", duration:"5:32" },
-{ title: "Baik Baik Sayang", artist: "Wali", src:"https://image2url.com/r2/default/audio/1771619660220-081c591d-e164-4cbc-818a-fe3671497f38.mp3", cover:"https://files.catbox.moe/254410.jpg", duration:"4:11" },
-{ title: "Yank", artist: "Wali", src:"https://image2url.com/r2/default/audio/1771626404446-67166325-1c0c-4d80-93ff-2ce5873b595b.mp3", cover:"https://files.catbox.moe/fn7in9.jpg", duration:"4:42" },
-{ title: "Tobat Maksiat (Tomat)", artist: "Wali", src:"https://image2url.com/r2/default/audio/1771627039637-ff746660-0cf2-4e20-8d38-96452bdeee5c.mp3", cover:"https://files.catbox.moe/fn7in9.jpg", duration:"4:24" },
-{ title: "Nenek-ku Pahlawanku", artist: "Wali", src:"https://image2url.com/r2/default/audio/1771627305197-c993ddc0-567f-4d63-bf2e-58af7b79e2d5.mp3", cover:"https://files.catbox.moe/fn7in9.jpg", duration:"4:18" },
-{ title: "Puaskah", artist: "Wali", src:"https://image2url.com/r2/default/audio/1771627423608-9415b1d0-ff7c-4def-9b76-edd7821ce344.mp3", cover:"https://files.catbox.moe/fn7in9.jpg", duration:"4:08" },
-{ title: "Harusnya Aku", artist: "Armada", src:"https://image2url.com/r2/default/audio/1771627545709-a3250a04-8b0b-4200-8457-9dccc75602fc.mp3", cover:"https://files.catbox.moe/oyvmee.jpg", duration:"4:42" },
-{ title: "montagem perigosa", artist: "", src:"https://image2url.com/r2/default/audio/1771644598296-98535e8d-1289-44b9-9816-aa53b4018e25.mp3", cover:"https://files.catbox.moe/in7eow.jpg", duration:"1:23" }
+{title:"Surat Cinta Untuk Starla",src:"starla.mp3"},
+{title:"Selamat Tinggal",src:"selamat-tinggal.mp3"},
+{title:"Seluruh Nafas Ini",src:"s.mp3"},
+{title:"Duka",src:"d.mp3"},
+{title:"Pedih",src:"p.mp3"},
+{title:"Bukti",src:"b.mp3"},
+{title:"Diary Depresiku",src:"di.mp3"},
+{title:"Sekuat Hatimu",src:"se.mp3"},
+{title:"Bernafas Tanpamu",src:"1.mp3"},
+{title:"Tak Pernah Ternilai",src:"2.mp3"},
+{title:"Saat Kau Telah Mengerti",src:"3.mp3"},
+{title:"Baik Baik Sayang",src:"https://image2url.com/r2/default/audio/1771619660220-081c591d-e164-4cbc-818a-fe3671497f38.mp3"},
+{title:"Yank",src:"https://image2url.com/r2/default/audio/1771626404446-67166325-1c0c-4d80-93ff-2ce5873b595b.mp3"},
+{title:"Tobat Maksiat",src:"https://image2url.com/r2/default/audio/1771627039637-ff746660-0cf2-4e20-8d38-96452bdeee5c.mp3"},
+{title:"Nenek-ku Pahlawanku",src:"https://image2url.com/r2/default/audio/1771627305197-c993ddc0-567f-4d63-bf2e-58af7b79e2d5.mp3"},
+{title:"Puaskah",src:"https://image2url.com/r2/default/audio/1771627423608-9415b1d0-ff7c-4def-9b76-edd7821ce344.mp3"},
+{title:"Harusnya Aku",src:"https://image2url.com/r2/default/audio/1771627545709-a3250a04-8b0b-4200-8457-9dccc75602fc.mp3"},
+{title:"montagem perigosa",src:"https://image2url.com/r2/default/audio/1771644598296-98535e8d-1289-44b9-9816-aa53b4018e25.mp3"}
 ];
 
-const audio      = document.getElementById("audio");
-const btnPlay    = document.getElementById("btnPlay");
-const btnPrev    = document.getElementById("btnPrev");
-const btnNext    = document.getElementById("btnNext");
-const progEl     = document.getElementById("prog");
-const fillEl     = document.getElementById("fill");
-const curEl      = document.getElementById("cur");
-const totEl      = document.getElementById("tot");
-const infoTitle  = document.getElementById("infoTitle");
-const infoArtist = document.getElementById("infoArtist");
-const artEl      = document.getElementById("art");
-const artWrapEl  = document.getElementById("artWrap");
-const playerEl   = document.getElementById("player");
-const listBody   = document.getElementById("listBody");
-const listCount  = document.getElementById("listCount");
-const iconPlay   = document.getElementById("iconPlay");
-const iconPause  = document.getElementById("iconPause");
+// =====================
+// ELEMENT
+// =====================
+const audio = document.getElementById("audio");
+const titleEl = document.getElementById("title");
+const listEl = document.getElementById("list");
 
-let idx = 0, playing = false;
-const fmt = s => isNaN(s) ? "0:00" : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
+const btnPlay = document.getElementById("play");
+const btnPrev = document.getElementById("prev");
+const btnNext = document.getElementById("next");
+const btnMode = document.getElementById("mode");
 
-function loadSong(i, autoplay=false) {
+// LOGIN
+const loginScreen = document.getElementById("loginScreen");
+const btnLogin = document.getElementById("btnLogin");
+const btnGuest = document.getElementById("btnGuest");
+
+// =====================
+// STATE
+// =====================
+let idx = 0;
+let playing = false;
+let isPremium = false;
+
+// mode: 0 normal,1 repeatAll,2 repeatOne,3 shuffle
+let mode = 0;
+const modeNames = ["Normal","Repeat All","Repeat One","Shuffle"];
+
+// =====================
+// LOGIN SYSTEM
+// =====================
+function checkLogin(){
+  const status = localStorage.getItem("user");
+  if(status){
+    isPremium = status === "premium";
+    loginScreen.style.display = "none";
+    if(!isPremium) btnMode.style.display="none";
+  }
+}
+
+btnLogin.onclick = ()=>{
+  const u = document.getElementById("user").value;
+  const p = document.getElementById("pass").value;
+
+  if(u==="admin" && p==="123"){
+    localStorage.setItem("user","premium");
+    isPremium = true;
+    loginScreen.style.display="none";
+  }else{
+    alert("Login salah");
+  }
+};
+
+btnGuest.onclick = ()=>{
+  localStorage.setItem("user","guest");
+  isPremium = false;
+  loginScreen.style.display="none";
+  btnMode.style.display="none";
+};
+
+checkLogin();
+
+// =====================
+// PLAYER
+// =====================
+function loadSong(i){
   idx = i;
-  const s = songs[i];
-  infoTitle.textContent  = s.title;
-  infoArtist.textContent = s.artist;
-  audio.src = s.src;
-  artEl.innerHTML = s.cover
-    ? `<img src="${s.cover}" alt="" onerror="this.parentNode.innerHTML='🎵'">`
-    : "🎵";
-  renderList();
-  if (autoplay) playAudio(); else syncUI();
-}
-
-function playAudio() {
-  audio.play().catch(()=>{});
-  playing = true;
-  iconPlay.style.display  = "none";
-  iconPause.style.display = "";
-  artWrapEl.classList.add("playing");
-  playerEl.classList.add("playing");
+  audio.src = songs[i].src;
+  titleEl.textContent = songs[i].title;
   renderList();
 }
 
-function pauseAudio() {
-  audio.pause();
-  playing = false;
-  iconPlay.style.display  = "";
-  iconPause.style.display = "none";
-  artWrapEl.classList.remove("playing");
-  playerEl.classList.remove("playing");
-  renderList();
+btnPlay.onclick = ()=>{
+  if(audio.paused){
+    audio.play();
+    playing=true;
+  }else{
+    audio.pause();
+    playing=false;
+  }
+};
+
+btnPrev.onclick = ()=>{
+  idx = (idx-1+songs.length)%songs.length;
+  loadSong(idx);
+  audio.play();
+};
+
+btnNext.onclick = ()=>{
+  nextSong();
+};
+
+function nextSong(){
+  if(mode===2){
+    loadSong(idx);
+    audio.play();
+    return;
+  }
+
+  if(mode===3){
+    idx = Math.floor(Math.random()*songs.length);
+    loadSong(idx);
+    audio.play();
+    return;
+  }
+
+  idx++;
+
+  if(idx>=songs.length){
+    if(mode===1) idx=0;
+    else return;
+  }
+
+  loadSong(idx);
+  audio.play();
 }
 
-function syncUI() {
-  iconPlay.style.display  = playing ? "none" : "";
-  iconPause.style.display = playing ? "" : "none";
-  artWrapEl.classList.toggle("playing", playing);
-  playerEl.classList.toggle("playing", playing);
-}
+audio.onended = nextSong;
 
-function renderList() {
-  listCount.textContent = `${songs.length} lagu`;
-  listBody.innerHTML = "";
-  songs.forEach((s, i) => {
-    const row = document.createElement("div");
-    row.className = "row"+(i===idx?" active":"")+(i===idx&&playing?" playing":"");
-    row.innerHTML = `
-      <div class="row-num">
-        <span class="row-num-val">${i+1}</span>
-        <div class="eq"><b></b><b></b><b></b></div>
-      </div>
-      <div class="thumb">${s.cover?`<img src="${s.cover}" alt="" onerror="this.parentNode.innerHTML='🎵'">`:"🎵"}</div>
-      <div class="meta">
-        <div class="meta-title">${s.title}</div>
-        <div class="meta-artist">${s.artist}</div>
-      </div>
-      <div class="dur">${s.duration}</div>
-    `;
-    row.addEventListener("click", () => loadSong(i, true));
-    listBody.appendChild(row);
+// =====================
+// MODE (Premium)
+// =====================
+btnMode.onclick = ()=>{
+  if(!isPremium){
+    alert("Fitur Premium");
+    return;
+  }
+  mode = (mode+1)%4;
+  btnMode.textContent = "Mode: " + modeNames[mode];
+};
+
+// =====================
+// LIST
+// =====================
+function renderList(){
+  listEl.innerHTML="";
+  songs.forEach((s,i)=>{
+    const div = document.createElement("div");
+    div.className = "row"+(i===idx?" active":"");
+    div.textContent = (i+1)+". "+s.title;
+    div.onclick = ()=>{
+      loadSong(i);
+      audio.play();
+    };
+    listEl.appendChild(div);
   });
-  const active = listBody.querySelector(".row.active");
-  if (active) active.scrollIntoView({ block:"nearest" });
-}
-
-btnPlay.addEventListener("click", () => playing ? pauseAudio() : playAudio());
-btnPrev.addEventListener("click", () => { idx=(idx-1+songs.length)%songs.length; loadSong(idx,playing); });
-btnNext.addEventListener("click", () => { idx=(idx+1)%songs.length; loadSong(idx,playing); });
-
-audio.addEventListener("timeupdate", () => {
-  if (!audio.duration) return;
-  const pct = (audio.currentTime/audio.duration)*100;
-  progEl.value = pct; fillEl.style.width = pct+"%";
-  curEl.textContent = fmt(audio.currentTime);
-  totEl.textContent = fmt(audio.duration);
-});
-progEl.addEventListener("input", () => {
-  if (audio.duration) audio.currentTime = (progEl.value/100)*audio.duration;
-  fillEl.style.width = progEl.value+"%";
-});
-audio.addEventListener("ended", () => { idx=(idx+1)%songs.length; loadSong(idx,true); });
-
-if ("mediaSession" in navigator) {
-  navigator.mediaSession.setActionHandler("play", playAudio);
-  navigator.mediaSession.setActionHandler("pause", pauseAudio);
-  navigator.mediaSession.setActionHandler("previoustrack", ()=>{ idx=(idx-1+songs.length)%songs.length; loadSong(idx,true); });
-  navigator.mediaSession.setActionHandler("nexttrack", ()=>{ idx=(idx+1)%songs.length; loadSong(idx,true); });
 }
 
 loadSong(0);
-</script>
-</body>
+</script></body>
 </html>
