@@ -645,39 +645,60 @@ input[type=range]::-webkit-slider-thumb {
 </div>
 
 <script type="module">
-import { songs } from './lagu.js';  // <-- ini panggil file lagu.js
+import { songs } from './lagu.js';
 
-// kode player tetap sama, contoh:
-const audio = document.getElementById("audio");
-const npTitle = document.getElementById("npTitle");
-const listEl = document.getElementById("list");
+const loginScreen = document.getElementById("loginScreen");
+const btnLogin = document.getElementById("btnLogin");
+const btnGuest = document.getElementById("btnGuest");
+const userBadge = document.getElementById("userBadge");
 
-let idx = 0;
+let isPremium = false;
 
-function loadSong(i) {
-  const s = songs[i];
-  audio.src = s.src;
-  npTitle.textContent = `${s.emoji} ${s.title}`;
+// cek login dari localStorage
+function checkLogin() {
+  const status = localStorage.getItem("mlUser");
+  if (status) {
+    isPremium = status === "premium";
+    loginScreen.classList.add('hidden');
+    updateBadge();
+  }
 }
 
-// render playlist
-function renderPlaylist() {
-  listEl.innerHTML = '';
-  songs.forEach((s,i)=>{
-    const row = document.createElement('div');
-    row.className = 'song-row';
-    row.innerHTML = `<div class="song-num">${i+1}</div><div class="song-details"><div class="song-name">${s.title}</div></div>`;
-    row.addEventListener('click', ()=>{
-      idx = i;
-      loadSong(idx);
-      audio.play();
-    });
-    listEl.appendChild(row);
-  });
+// update badge premium/free
+function updateBadge() {
+  if (isPremium) {
+    userBadge.textContent = "Premium";
+    userBadge.className = "badge-premium";
+  } else {
+    userBadge.textContent = "Free";
+    userBadge.className = "badge-free";
+  }
 }
 
-renderPlaylist();
-loadSong(idx);
+// login premium
+btnLogin.addEventListener('click', () => {
+  const user = document.getElementById("user").value.trim();
+  const pass = document.getElementById("pass").value;
+  if (user === "admin" && pass === "123") {
+    localStorage.setItem("mlUser","premium");
+    isPremium = true;
+    loginScreen.classList.add('hidden');
+    updateBadge();
+    alert("Selamat datang Premium!");
+  } else {
+    alert("Login gagal!");
+  }
+});
+
+// login guest
+btnGuest.addEventListener('click', () => {
+  localStorage.setItem("mlUser","free");
+  isPremium = false;
+  loginScreen.classList.add('hidden');
+  updateBadge();
+});
+
+checkLogin();
 </script>
 </body>
 </html>
