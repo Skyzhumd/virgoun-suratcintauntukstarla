@@ -1,0 +1,22 @@
+// lagu.js
+export const songs = [
+  {title:"Surat Cinta Untuk Starla",src:"starla.mp3",emoji:"💌"},
+  {title:"Selamat Tinggal",src:"selamat-tinggal.mp3",emoji:"👋"},
+  {title:"Seluruh Nafas Ini",src:"s.mp3",emoji:"🌬️"},
+  {title:"Duka",src:"d.mp3",emoji:"🌧️"},
+  {title:"Pedih",src:"p.mp3",emoji:"💔"},
+  {title:"Bukti",src:"b.mp3",emoji:"📜"},
+  {title:"Diary Depresiku",src:"di.mp3",emoji:"📔"},
+  {title:"Sekuat Hatimu",src:"se.mp3",emoji:"💪"},
+  {title:"Bernafas Tanpamu",src:"1.mp3",emoji:"🌊"},
+  {title:"Tak Pernah Ternilai",src:"2.mp3",emoji:"⭐"},
+  {title:"Saat Kau Telah Mengerti",src:"3.mp3",emoji:"🌸"},
+  {title:"Baik Baik Sayang",src:"https://image2url.com/r2/default/audio/1771619660220-081c591d-e164-4cbc-818a-fe3671497f38.mp3",emoji:"🌺"},
+  {title:"Yank",src:"https://image2url.com/r2/default/audio/1771626404446-67166325-1c0c-4d80-93ff-2ce5873b595b.mp3",emoji:"💛"},
+  {title:"Tobat Maksiat",src:"https://image2url.com/r2/default/audio/1771627039637-ff746660-0cf2-4e20-8d38-96452bdeee5c.mp3",emoji:"🙏"},
+  {title:"Nenek-ku Pahlawanku",src:"https://image2url.com/r2/default/audio/1771627305197-c993ddc0-567f-4d63-bf2e-58af7b79e2d5.mp3",emoji:"👵"},
+  {title:"Puaskah",src:"https://image2url.com/r2/default/audio/1771627423608-9415b1d0-ff7c-4def-9b76-edd7821ce344.mp3",emoji:"❓"},
+  {title:"Harusnya Aku",src:"https://image2url.com/r2/default/audio/1771627545709-a3250a04-8b0b-4200-8457-9dccc75602fc.mp3",emoji:"😔"},
+  {title:"Montagem Perigosa",src:"https://image2url.com/r2/default/audio/1771644598296-98535e8d-1289-44b9-9816-aa53b4018e25.mp3",emoji:"🔥"},
+  {title:"Loucura Letal (Slowed)",src:"https://image2url.com/r2/default/audio/1771648040907-1037e0e1-c14a-483b-adf0-45c5f87e33ff.mp3",emoji:"🌀"},
+];
