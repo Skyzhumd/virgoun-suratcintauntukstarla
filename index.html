@@ -2,68 +2,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spotify Lite Premium</title>
-<style>
+<title>Spotify Lite Premium</title><style>
 body{
   margin:0;
   font-family:Arial;
   background:#0a0a12;
   color:white;
-}/* LOGIN */
+}
+
+/* LOGIN */
 #loginScreen{
-position:fixed;
-inset:0;
-background:#0a0a12;
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:999;
+  position:fixed;
+  inset:0;
+  background:#0a0a12;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
 }
 .login-box{
-background:#111;
-padding:25px;
-border-radius:10px;
-width:260px;
-text-align:center;
+  background:#111;
+  padding:25px;
+  border-radius:10px;
+  width:260px;
+  text-align:center;
 }
 .login-box input{
-width:100%;
-padding:8px;
-margin:6px 0;
+  width:100%;
+  padding:8px;
+  margin:6px 0;
 }
 .login-box button{
-width:100%;
-padding:10px;
-margin-top:6px;
+  width:100%;
+  padding:10px;
+  margin-top:6px;
 }
 
 /* APP */
 .app{
-padding:15px;
-max-width:500px;
-margin:auto;
+  padding:15px;
+  max-width:500px;
+  margin:auto;
+}
+
+#logout{
+  float:right;
+  padding:6px 10px;
+  margin-bottom:10px;
 }
 
 .controls button{
-padding:10px;
-margin:5px;
+  padding:10px;
+  margin:5px;
 }
 
 .list{
-margin-top:15px;
+  margin-top:15px;
 }
 .row{
-padding:8px;
-border-bottom:1px solid #222;
-cursor:pointer;
+  padding:8px;
+  border-bottom:1px solid #222;
+  cursor:pointer;
 }
 .row.active{
-background:#222;
+  background:#222;
 }
-</style>
-
-</head>
-<body><!-- LOGIN --><div id="loginScreen">
+</style></head><body><!-- LOGIN --><div id="loginScreen">
   <div class="login-box">
     <h3>Login Premium</h3>
     <input id="user" placeholder="Username">
@@ -72,8 +76,10 @@ background:#222;
     <button id="btnGuest">Masuk Gratis</button>
   </div>
 </div><!-- APP --><div class="app">
-  <h2 id="title">Pilih Lagu</h2>
-  <audio id="audio"></audio>  <div class="controls">
+  <button id="logout">Logout</button>
+  <h2 id="title">Pilih Lagu</h2>  <!-- audio background optimized --><audio id="audio" preload="auto" playsinline controls></audio>
+
+  <div class="controls">
     <button id="prev">Prev</button>
     <button id="play">Play / Pause</button>
     <button id="next">Next</button>
@@ -81,7 +87,7 @@ background:#222;
   </div>  <div class="list" id="list"></div>
 </div><script>
 // =====================
-// DATA LAGU (18)
+// DATA LAGU (ASLI 18)
 // =====================
 const songs = [
 {title:"Surat Cinta Untuk Starla",src:"starla.mp3"},
@@ -101,7 +107,8 @@ const songs = [
 {title:"Nenek-ku Pahlawanku",src:"https://image2url.com/r2/default/audio/1771627305197-c993ddc0-567f-4d63-bf2e-58af7b79e2d5.mp3"},
 {title:"Puaskah",src:"https://image2url.com/r2/default/audio/1771627423608-9415b1d0-ff7c-4def-9b76-edd7821ce344.mp3"},
 {title:"Harusnya Aku",src:"https://image2url.com/r2/default/audio/1771627545709-a3250a04-8b0b-4200-8457-9dccc75602fc.mp3"},
-{title:"montagem perigosa",src:"https://image2url.com/r2/default/audio/1771644598296-98535e8d-1289-44b9-9816-aa53b4018e25.mp3"}
+{title:"montagem perigosa",src:"https://image2url.com/r2/default/audio/1771644598296-98535e8d-1289-44b9-9816-aa53b4018e25.mp3"},
+{title:"loucura letal (slowed)",src:"https://image2url.com/r2/default/audio/1771648040907-1037e0e1-c14a-483b-adf0-45c5f87e33ff.mp3"}
 ];
 
 // =====================
@@ -115,8 +122,8 @@ const btnPlay = document.getElementById("play");
 const btnPrev = document.getElementById("prev");
 const btnNext = document.getElementById("next");
 const btnMode = document.getElementById("mode");
+const btnLogout = document.getElementById("logout");
 
-// LOGIN
 const loginScreen = document.getElementById("loginScreen");
 const btnLogin = document.getElementById("btnLogin");
 const btnGuest = document.getElementById("btnGuest");
@@ -125,22 +132,25 @@ const btnGuest = document.getElementById("btnGuest");
 // STATE
 // =====================
 let idx = 0;
-let playing = false;
 let isPremium = false;
-
-// mode: 0 normal,1 repeatAll,2 repeatOne,3 shuffle
 let mode = 0;
 const modeNames = ["Normal","Repeat All","Repeat One","Shuffle"];
 
 // =====================
-// LOGIN SYSTEM
+// LOGIN
 // =====================
 function checkLogin(){
   const status = localStorage.getItem("user");
   if(status){
     isPremium = status === "premium";
     loginScreen.style.display = "none";
-    if(!isPremium) btnMode.style.display="none";
+
+    if(!isPremium){
+      btnMode.style.display="none";
+      btnLogout.style.display="block";
+    }else{
+      btnLogout.style.display="none";
+    }
   }
 }
 
@@ -150,8 +160,8 @@ btnLogin.onclick = ()=>{
 
   if(u==="admin" && p==="123"){
     localStorage.setItem("user","premium");
-    isPremium = true;
     loginScreen.style.display="none";
+    btnLogout.style.display="none";
   }else{
     alert("Login salah");
   }
@@ -159,9 +169,15 @@ btnLogin.onclick = ()=>{
 
 btnGuest.onclick = ()=>{
   localStorage.setItem("user","guest");
-  isPremium = false;
   loginScreen.style.display="none";
   btnMode.style.display="none";
+  btnLogout.style.display="block";
+};
+
+btnLogout.onclick = ()=>{
+  localStorage.removeItem("user");
+  audio.pause();
+  loginScreen.style.display="flex";
 };
 
 checkLogin();
@@ -174,16 +190,12 @@ function loadSong(i){
   audio.src = songs[i].src;
   titleEl.textContent = songs[i].title;
   renderList();
+  updateMediaSession();
 }
 
 btnPlay.onclick = ()=>{
-  if(audio.paused){
-    audio.play();
-    playing=true;
-  }else{
-    audio.pause();
-    playing=false;
-  }
+  if(audio.paused) audio.play();
+  else audio.pause();
 };
 
 btnPrev.onclick = ()=>{
@@ -192,9 +204,7 @@ btnPrev.onclick = ()=>{
   audio.play();
 };
 
-btnNext.onclick = ()=>{
-  nextSong();
-};
+btnNext.onclick = nextSong;
 
 function nextSong(){
   if(mode===2){
@@ -202,30 +212,23 @@ function nextSong(){
     audio.play();
     return;
   }
-
   if(mode===3){
     idx = Math.floor(Math.random()*songs.length);
     loadSong(idx);
     audio.play();
     return;
   }
-
   idx++;
-
   if(idx>=songs.length){
     if(mode===1) idx=0;
     else return;
   }
-
   loadSong(idx);
   audio.play();
 }
 
 audio.onended = nextSong;
 
-// =====================
-// MODE (Premium)
-// =====================
 btnMode.onclick = ()=>{
   if(!isPremium){
     alert("Fitur Premium");
@@ -251,6 +254,30 @@ function renderList(){
     listEl.appendChild(div);
   });
 }
+
+// =====================
+// BACKGROUND PLAY
+// =====================
+function updateMediaSession(){
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: songs[idx].title,
+      artist: "Spotify Lite",
+      album: "Music Player"
+    });
+
+    navigator.mediaSession.setActionHandler('play', () => audio.play());
+    navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+    navigator.mediaSession.setActionHandler('previoustrack', () => btnPrev.onclick());
+    navigator.mediaSession.setActionHandler('nexttrack', () => btnNext.onclick());
+  }
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && !audio.paused) {
+    audio.play();
+  }
+});
 
 loadSong(0);
 </script></body>
