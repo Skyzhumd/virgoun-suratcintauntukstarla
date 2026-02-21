@@ -1,5 +1,5 @@
 // lagu.js
-export const songs = [
+ const songs = [
   {title:"Surat Cinta Untuk Starla",src:"starla.mp3",emoji:"💌"},
   {title:"Selamat Tinggal",src:"selamat-tinggal.mp3",emoji:"👋"},
   {title:"Seluruh Nafas Ini",src:"s.mp3",emoji:"🌬️"},
