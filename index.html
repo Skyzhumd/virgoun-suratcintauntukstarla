@@ -898,5 +898,69 @@ document.head.appendChild(style);
 
 loadSong(0);
 </script>
+<script>
+/* ===== LIST ALBUM ARTIS DENGAN SRC ===== */
+const albums = [
+  {
+    artist: "Armada",
+    albums: [
+      { title: "Bersama Bintang", songs: [
+          { name: "Ku Tetap Setia", src: "lagu/ku_tetap_setia.mp3" },
+          { name: "Asal Kau Bahagia", src: "lagu/asal_kau_bahagia.mp3" }
+        ] 
+      },
+      { title: "Menunggu Kamu", songs: [
+          { name: "Harus Terpisah", src: "lagu/harus_terpisah.mp3" },
+          { name: "Kamu Harus Bahagia", src: "lagu/kamu_harus_bahagia.mp3" }
+        ] 
+      },
+      { title: "Harusnya Aku", songs: [
+          { name: "Harusnya Aku", src: "lagu/harusnya_aku.mp3" },
+          { name: "Terima Kasih Cinta", src: "lagu/terima_kasih_cinta.mp3" }
+        ] 
+      }
+    ]
+  }
+];
+
+// RENDER ALBUM DI SECTION BARU
+const playlistSection = document.createElement('div');
+playlistSection.className = 'playlist-section';
+playlistSection.innerHTML = `<div class="section-header">
+  <span class="section-title">Album Armada</span>
+</div>`;
+document.querySelector('.app').appendChild(playlistSection);
+
+albums[0].albums.forEach((alb) => {
+  const albumDiv = document.createElement('div');
+  albumDiv.className = 'song-list';
+  albumDiv.innerHTML = `<div class="section-title" style="font-size:14px;margin-bottom:6px;">${alb.title}</div>`;
+  
+  alb.songs.forEach((song, si) => {
+    const songRow = document.createElement('div');
+    songRow.className = 'song-row';
+    songRow.innerHTML = `
+      <span class="song-num">${si+1}</span>
+      <div class="song-icon">🎵</div>
+      <div class="song-details">
+        <div class="song-name">${song.name}</div>
+        <div class="song-meta">${albums[0].artist}</div>
+      </div>
+    `;
+    songRow.onclick = () => {
+      // SET AUDIO PLAYER LANGSUNG
+      audio.src = song.src;
+      audio.play().then(() => setPlaying(true));
+      npTitle.textContent = song.name;
+      npCover.textContent = "🎵";
+      showToast("Memainkan: " + song.name);
+      renderList(); // update highlight active song
+    };
+    albumDiv.appendChild(songRow);
+  });
+
+  playlistSection.appendChild(albumDiv);
+});
+</script>
 </body>
 </html>
