@@ -1,5 +1,4 @@
-// lagu.js
-const songs = [
+songs.push = (
 {title:"Kimcil Kepolen",src:"",emoji:"😅"},
 {title:"Sayang",src:"",emoji:"🥺"},
 {title:"Nemen",src:"",emoji:"💔"},
@@ -28,5 +27,5 @@ const songs = [
 {title:"Mantan Tersayang",src:"",emoji:"💘"},
 {title:"Tresno Waranggono",src:"",emoji:"🎶"},
 {title:"Sebatas Friendly",src:"",emoji:"🙂"},
-{title:"Ropang",src:"",emoji:"🍞🔥"},
-];
+{title:"Ropang",src:"",emoji:"🍞🔥"}
+)
