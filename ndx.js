@@ -1,12 +1,9 @@
 // lagu.js
-const music = [
+const songs = [
 {title:"Kimcil Kepolen",src:"",emoji:"😅"},
-{title:"Bojo Galak",src:"",emoji:"😤"},
 {title:"Sayang",src:"",emoji:"🥺"},
 {title:"Nemen",src:"",emoji:"💔"},
 {title:"Talining Asmoro",src:"",emoji:"💕"},
-{title:"Pambasilet",src:"",emoji:"🔥"},
-{title:"Sido Rondo",src:"",emoji:"😢"},
 {title:"Kelingan Mantan",src:"",emoji:"😔"},
 {title:"Pamit",src:"",emoji:"👋"},
 {title:"Ra Kuat Mbok",src:"",emoji:"😭"},

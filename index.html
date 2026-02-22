@@ -746,10 +746,10 @@ checkLogin();
 // PLAYER
 function loadSong(i) {
   idx = i;
-  audio.src = music[i].src;
+  audio.src = songs[i].src;
   audio.volume = volumeSlider.value;
-  npTitle.textContent = music[i].title;
-  npCover.textContent = music[i].emoji;
+  npTitle.textContent = songs[i].title;
+  npCover.textContent = songs[i].emoji;
   npCover.className = 'np-cover icon-' + i;
   renderList();
   updateMediaSession();
@@ -776,22 +776,22 @@ btnPlay.onclick = () => {
 };
 
 btnPrev.onclick = () => {
-  idx = (idx - 1 + music.length) % music.length;
+  idx = (idx - 1 + songs.length) % songs.length;
   loadSong(idx);
   audio.play().then(() => setPlaying(true));
 };
 
 function nextSong() {
   if (mode === 2) { audio.currentTime = 0; audio.play(); return; }
-  if (mode === 3) { idx = Math.floor(Math.random() * music.length); }
-  else { idx++; if (idx >= music.length) { if (mode === 1) idx = 0; else { setPlaying(false); return; } } }
+  if (mode === 3) { idx = Math.floor(Math.random() * songs.length); }
+  else { idx++; if (idx >= songs.length) { if (mode === 1) idx = 0; else { setPlaying(false); return; } } }
   loadSong(idx);
   audio.play().then(() => setPlaying(true));
 }
 
 btnNext.onclick = () => {
-  if (mode === 3) idx = Math.floor(Math.random() * music.length);
-  else { idx = (idx + 1) % music.length; }
+  if (mode === 3) idx = Math.floor(Math.random() * songs.length);
+  else { idx = (idx + 1) % songs.length; }
   loadSong(idx);
   audio.play().then(() => setPlaying(true));
 };
@@ -845,8 +845,8 @@ volumeSlider.oninput = () => { audio.volume = volumeSlider.value; };
 // LIST
 function renderList() {
   listEl.innerHTML = '';
-  songCountEl.textContent = music.length + ' lagu';
-  music.forEach((s, i) => {
+  songCountEl.textContent = songs.length + ' lagu';
+  songs.forEach((s, i) => {
     const div = document.createElement('div');
     div.className = 'song-row' + (i === idx ? ' active' : '');
     div.innerHTML = `
@@ -879,7 +879,7 @@ function renderList() {
 function updateMediaSession() {
   if ('mediaSession' in navigator) {
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: music[idx].title,
+      title: songs[idx].title,
       artist: 'NDX A.K.A',
       album: 'PlayList NDX A.K.A'
     });
